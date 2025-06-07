@@ -1,0 +1,16 @@
+name: 'Generate Artefact Version'
+description: 'Generates a draft artefact version using latest Git tag and short commit SHA'
+author: 'Side8'
+inputs: {}
+outputs:
+  draft_version:
+    description: 'The generated draft version (e.g., 0.1.4-a1b2c3d)'
+  latest_tag:
+    description: 'The latest git tag without the "v" prefix (e.g., 0.1.4)'
+runs:
+  using: 'composite'
+  steps:
+    - name: Generate artefact version
+      id: vars
+      shell: bash
+      run: ${{ github.action_path }}/entrypoint.sh
