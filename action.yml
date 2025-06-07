@@ -1,0 +1,25 @@
+name: 'Generate Artefact Version'
+description: 'Generates a draft artefact version using latest Git tag and short commit SHA'
+author: 'HMCTS'
+inputs:
+  release:
+    description: 'Set to "true" to use the Git tag only (no short SHA). Default is "false".'
+    required: false
+    default: 'false'
+outputs:
+  draft_version:
+    description: 'The generated draft version (e.g., 0.1.4-a1b2c3d)'
+  release_version:
+    description: 'The latest git tag without the "v" prefix (e.g., 0.1.4)'
+runs:
+  using: 'composite'
+  steps:
+    - name: Generate artefact version
+      id: vars
+      shell: bash
+      run: ${{ github.action_path }}/entrypoint.sh
+      env:
+        INPUT_RELEASE: ${{ inputs.release }}
+branding:
+  icon: tag
+  color: blue
