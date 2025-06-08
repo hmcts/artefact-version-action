@@ -9,8 +9,10 @@ inputs:
 outputs:
   draft_version:
     description: 'The generated draft version (e.g., 0.1.4-a1b2c3d)'
+    value: ${{ steps.vars.outputs.draft_version }}
   release_version:
     description: 'The latest git tag without the "v" prefix (e.g., 0.1.4)'
+    value: ${{ steps.vars.outputs.release_version }}
 runs:
   using: 'composite'
   steps:
