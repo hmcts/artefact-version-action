@@ -5,20 +5,51 @@
 
 This GitHub Action generates a draft artefact version string based on the latest Git tag and short SHA.
 
-## Inputs
+## 📌 Version Types
+This project follows [Semantic Versioning](https://semver.org) (SemVer) conventions.
+
+We support two types of versions:
+
+### 🔧 Draft Versions (on every merge to main or master)
+* Triggered by: push to main or master
+* Version format: vX.Y.Z-&lt;short-sha&gt;, e.g. v0.2.1-a1b2c3d
+    * If no release tag exists, defaults to v0.0.0-&lt;short-sha&gt;
+* Purpose: Used for previewing or collaborating on in-progress API definitions.
+* Behaviour:
+    * The OpenAPI info.version is set automatically.
+    * The spec is uploaded to SwaggerHub as:
+        * visibility: public
+        * published: false
+
+### 🚀 Release Versions (on GitHub release publish)
+
+* Triggered by: Publishing a GitHub release via the UI
+* Git tag format: vX.Y.Z (e.g. v1.0.0)
+* Version used: X.Y.Z (without the v)
+* Purpose: Final, published version of the API for public consumption.
+* Behaviour:
+    * The OpenAPI info.version is set to the release tag version.
+    * The spec is uploaded to SwaggerHub as:
+        * visibility: public
+        * published: true
+
+## ⚙️ How to Use
+
+### Inputs
 
 - `release`: *(optional)*  
   If set to `true`, uses the Git tag as-is for versioning (e.g., `0.1.4`).  
   If `false` or omitted, appends the short Git SHA to the latest tag (e.g., `0.1.4-a1b2c3d`).
 
-## Outputs
+### Outputs
 
 - `draft_version`: Generated version string for draft builds, e.g. `0.1.4-ab12cd3`
 - `release_version`: Clean version from Git tag for release builds, e.g. `0.1.4` (strips the `v` prefix)
 
-## Usage
 
-### 🧪 Draft Mode (default)
+### Usage
+
+#### 🧪 Draft Mode (default)
 
 ```yaml
 - name: Generate Version
@@ -34,7 +65,7 @@ ${{ steps.artefact.outputs.draft_version }}
 
 ---
 
-### 🚀 Release Mode
+#### 🚀 Release Mode
 
 ```yaml
 - name: Generate Release Version
@@ -50,7 +81,7 @@ Access with:
 ${{ steps.artefact.outputs.release_version }}
 ```
 
-## Tagging on Release
+## Release Custom Action
 
 When creating a new version of this action, it's important to maintain a floating `vX`, e.g. `v1`, tag in addition to the full semantic version tag (e.g., `v1.0.1`).
 
@@ -66,7 +97,7 @@ By maintaining the floating tag, we:
 
 This helps reduce long-term run and maintain costs across consuming projects.
 
-### How to Tag
+#### How to Tag
 
 1. Tag and push the new version via the command line or GitHub UI:
 
@@ -82,7 +113,7 @@ This helps reduce long-term run and maintain costs across consuming projects.
    git push origin v1 --force
    ```
 
-### Verify
+#### Verify
 
 You can verify that `v1` now points to the latest version by visiting:
 
