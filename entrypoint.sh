@@ -7,6 +7,10 @@ if [[ "$INPUT_RELEASE" == "true" ]]; then
   VERSION="${TAG_NAME#v}"
 
   echo "ℹ️ Using release version from tag: $VERSION"
+  if [[ -z "$VERSION" ]]; then
+    echo "❌ Resolved draft version is empty. Aborting."
+    exit 1
+  fi
   echo "release_version=$VERSION" >> "$GITHUB_OUTPUT"
 else
   # Draft mode: Use latest git tag + short SHA, or fallback to default
@@ -22,5 +26,9 @@ else
   VERSION="${LATEST_TAG}-${SHORT_SHA}"
 
   echo "ℹ️ Generated draft version: $VERSION"
+  if [[ -z "$VERSION" ]]; then
+    echo "❌ Resolved draft version is empty. Aborting."
+    exit 1
+  fi
   echo "draft_version=$VERSION" >> "$GITHUB_OUTPUT"
 fi
