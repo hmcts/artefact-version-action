@@ -14,10 +14,12 @@ if [[ "$INPUT_RELEASE" == "true" ]]; then
   echo "release_version=$VERSION" >> "$GITHUB_OUTPUT"
 else
   # Draft mode: Use latest git tag + short SHA, or fallback to default.
-  # INPUT_TAG_MATCH defaults to '*' (match every tag), preserving the
-  # previous behaviour. Callers can pass e.g. 'v*' to filter out tags
-  # that share refs/tags/* but aren't semver (such as deploy markers).
-  TAG_MATCH="${INPUT_TAG_MATCH:-*}"
+  # INPUT_TAG_MATCH defaults to 'v*' to match the canonical HMCTS tag
+  # format (vX.Y.Z) and ignore non-semver tags such as deploy markers
+  # in repos that share refs/tags/*. Callers can pass '*' to match any
+  # tag (the pre-tag-match behaviour) or any other glob their repo
+  # needs.
+  TAG_MATCH="${INPUT_TAG_MATCH:-v*}"
   if LATEST_TAG=$(git describe --tags --abbrev=0 --match="$TAG_MATCH" 2>/dev/null); then
     echo "ℹ️ Latest Git tag resolved to: $LATEST_TAG (match: $TAG_MATCH)"
   else

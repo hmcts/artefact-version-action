@@ -7,9 +7,9 @@ inputs:
     required: false
     default: 'false'
   tag-match:
-    description: 'Glob pattern passed to `git describe --match` when resolving the latest tag in draft mode. Use this to filter tags when `refs/tags/*` is shared with non-semver tags (e.g. `v*` to ignore `deploy-*` deploy tags). Default `*` preserves the previous behaviour of matching every tag.'
+    description: 'Glob pattern passed to `git describe --match` when resolving the latest tag in draft mode. Default `v*` matches the canonical HMCTS tag format (`vX.Y.Z`) and ignores non-semver tags such as deploy markers. Override with `*` to match any tag, or any other glob your repo needs.'
     required: false
-    default: '*'
+    default: 'v*'
 outputs:
   draft_version:
     description: 'The generated draft version (e.g., 0.1.4-a1b2c3d)'
