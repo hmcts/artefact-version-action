@@ -6,6 +6,10 @@ inputs:
     description: 'Set to "true" to use the Git tag only (no short SHA). Default is "false".'
     required: false
     default: 'false'
+  tag-match:
+    description: 'Glob pattern passed to `git describe --match` when resolving the latest tag in draft mode. Default `v*` matches the canonical HMCTS tag format (`vX.Y.Z`) and ignores non-semver tags such as deploy markers. Override with `*` to match any tag, or any other glob your repo needs.'
+    required: false
+    default: 'v*'
 outputs:
   draft_version:
     description: 'The generated draft version (e.g., 0.1.4-a1b2c3d)'
@@ -22,6 +26,7 @@ runs:
       run: ${{ github.action_path }}/entrypoint.sh
       env:
         INPUT_RELEASE: ${{ inputs.release }}
+        INPUT_TAG_MATCH: ${{ inputs.tag-match }}
 branding:
   icon: tag
   color: blue

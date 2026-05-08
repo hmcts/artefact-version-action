@@ -41,6 +41,10 @@ We support two types of versions:
   If set to `true`, uses the Git tag as-is for versioning (e.g., `0.1.4`).  
   If `false` or omitted, appends the short Git SHA to the latest tag (e.g., `0.1.4-a1b2c3d`).
 
+- `tag-match`: *(optional)*  
+  Glob passed to `git describe --match` when resolving the latest tag in draft mode. Default `v*` matches the canonical HMCTS tag format (`vX.Y.Z`) and ignores non-semver tags such as deploy markers.
+  Override with `*` to match any tag, which restores the pre-`tag-match` behaviour (and is what services using non-`v`-prefixed semver tags will need). Has no effect in release mode (which reads `GITHUB_REF` directly).
+
 ### Outputs
 
 - `draft_version`: Generated version string for draft builds, e.g. `0.1.4-ab12cd3`
@@ -80,6 +84,24 @@ Access with:
 ```yaml
 ${{ steps.artefact.outputs.release_version }}
 ```
+
+---
+
+#### 🏷️ Customising the tag match pattern
+
+The default `tag-match: 'v*'` matches the canonical HMCTS tag format (`vX.Y.Z`) — most consumers don't need to set it. Override it if your repo's tagging convention differs.
+
+To match any tag (the pre-`tag-match` behaviour, useful for repos that tag without a `v` prefix):
+
+```yaml
+- name: Generate Version
+  id: artefact
+  uses: hmcts/artefact-version-action@v1
+  with:
+    tag-match: '*'
+```
+
+Any glob that `git describe --match` accepts is valid (e.g. `release-*`, `app-v*`).
 
 ## Release Custom Action
 
