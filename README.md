@@ -41,6 +41,10 @@ We support two types of versions:
   If set to `true`, uses the Git tag as-is for versioning (e.g., `0.1.4`).  
   If `false` or omitted, appends the short Git SHA to the latest tag (e.g., `0.1.4-a1b2c3d`).
 
+- `tag-match`: *(optional)*  
+  Glob passed to `git describe --match` when resolving the latest tag in draft mode. Default `*` matches every tag (previous behaviour).
+  Set this to `v*` (or another pattern) when `refs/tags/*` is shared with non-semver tags — for example, when a deploy pipeline pushes `deploy-<env>-<version>` tags to the same repo. Without a filter, `git describe` will pick those deploy tags as the "latest tag" and produce a polluted version string. Has no effect in release mode (which reads `GITHUB_REF` directly).
+
 ### Outputs
 
 - `draft_version`: Generated version string for draft builds, e.g. `0.1.4-ab12cd3`
@@ -79,6 +83,20 @@ Access with:
 
 ```yaml
 ${{ steps.artefact.outputs.release_version }}
+```
+
+---
+
+#### 🏷️ Filtering tags (e.g. coexisting with deploy tags)
+
+If your repo's `refs/tags/*` namespace contains non-semver tags (deploy markers, environment promotions, etc.), pass `tag-match` so the action only considers semver tags:
+
+```yaml
+- name: Generate Version
+  id: artefact
+  uses: hmcts/artefact-version-action@v1
+  with:
+    tag-match: 'v*'
 ```
 
 ## Release Custom Action

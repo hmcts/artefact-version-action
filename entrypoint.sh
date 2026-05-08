@@ -13,12 +13,16 @@ if [[ "$INPUT_RELEASE" == "true" ]]; then
   fi
   echo "release_version=$VERSION" >> "$GITHUB_OUTPUT"
 else
-  # Draft mode: Use latest git tag + short SHA, or fallback to default
-  if LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null); then
-    echo "ℹ️ Latest Git tag resolved to: $LATEST_TAG"
+  # Draft mode: Use latest git tag + short SHA, or fallback to default.
+  # INPUT_TAG_MATCH defaults to '*' (match every tag), preserving the
+  # previous behaviour. Callers can pass e.g. 'v*' to filter out tags
+  # that share refs/tags/* but aren't semver (such as deploy markers).
+  TAG_MATCH="${INPUT_TAG_MATCH:-*}"
+  if LATEST_TAG=$(git describe --tags --abbrev=0 --match="$TAG_MATCH" 2>/dev/null); then
+    echo "ℹ️ Latest Git tag resolved to: $LATEST_TAG (match: $TAG_MATCH)"
   else
     LATEST_TAG="v0.0.0"
-    echo "⚠️ No Git tag found. Falling back to default: $LATEST_TAG"
+    echo "⚠️ No Git tag matching '$TAG_MATCH' found. Falling back to default: $LATEST_TAG"
   fi
 
   LATEST_TAG="${LATEST_TAG#v}"
